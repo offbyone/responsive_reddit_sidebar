@@ -17,7 +17,8 @@ package suffix="dev":
         -x ".github/*" \
         -x ".claude/*" \
         -x "CLAUDE.md" \
-        -x ".jj*"
+        -x ".jj*" \
+        -x "dist/*"
     echo "Created dist/responsive-reddit-sidebar-{{suffix}}.zip"
 
 # Package extension for release (creates versioned .zip)
