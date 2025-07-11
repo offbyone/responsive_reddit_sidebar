@@ -1,33 +1,30 @@
 # Chrome Extension Development Tasks
 
-# Package extension for development (creates unversioned .zip)
-package:
-    #!/usr/bin/env bash
-    echo "Packaging extension for development..."
-    zip -r "responsive-reddit-sidebar-dev.zip" . \
-        -x "*.git*" \
-        -x "*.DS_Store" \
-        -x "justfile" \
-        -x "DEVELOPMENT.md" \
-        -x "*.zip" \
-        -x ".github/*"
-        -x ".jj*"
-    echo "Created responsive-reddit-sidebar-dev.zip"
+default:
+    just --choose
 
-# Package extension for release (creates versioned .zip)
-package-release:
+# Package extension (creates .zip with specified suffix)
+package suffix="dev":
     #!/usr/bin/env bash
-    VERSION=$(jq -r '.version' manifest.json)
-    echo "Packaging extension v${VERSION} for release..."
-    zip -r "responsive-reddit-sidebar-v${VERSION}.zip" . \
+    echo "Packaging extension with suffix '{{suffix}}'..."
+    mkdir -p dist
+    zip -r "dist/responsive-reddit-sidebar-{{suffix}}.zip" . \
         -x "*.git*" \
         -x "*.DS_Store" \
         -x "justfile" \
         -x "DEVELOPMENT.md" \
         -x "*.zip" \
         -x ".github/*" \
+        -x ".claude/*" \
+        -x "CLAUDE.md" \
         -x ".jj*"
-    echo "Created responsive-reddit-sidebar-v${VERSION}.zip"
+    echo "Created dist/responsive-reddit-sidebar-{{suffix}}.zip"
+
+# Package extension for release (creates versioned .zip)
+package-release:
+    #!/usr/bin/env bash
+    VERSION=$(jq -r '.version' manifest.json)
+    just package "v${VERSION}"
 
 # Validate manifest.json
 validate:

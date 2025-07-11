@@ -47,5 +47,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: extension-dev-${{ github.sha }}
-          path: responsive-reddit-sidebar-dev.zip
+          path: dist/responsive-reddit-sidebar-dev.zip
           retention-days: 30

@@ -29,12 +29,7 @@ jobs:
           echo "short_sha=$SHORT_SHA" >> "$GITHUB_OUTPUT"
 
       - name: Package development release
-        run: just package
-
-      - name: Rename package with commit info
-        run: |
-          mv responsive-reddit-sidebar-dev.zip \
-             responsive-reddit-sidebar-v${{ steps.info.outputs.version }}-dev-${{ steps.info.outputs.short_sha }}.zip
+        run: just package "v${{ steps.info.outputs.version }}-dev-${{ steps.info.outputs.short_sha }}"
 
       - name: Create or update development release
         uses: softprops/action-gh-release@v2
@@ -62,7 +57,7 @@ jobs:
 
             **Note:** This is a development build and may be unstable. For stable releases, use tagged releases instead.
           files: |
-            responsive-reddit-sidebar-v${{ steps.info.outputs.version }}-dev-${{ steps.info.outputs.short_sha }}.zip
+            dist/responsive-reddit-sidebar-v${{ steps.info.outputs.version }}-dev-${{ steps.info.outputs.short_sha }}.zip
           prerelease: true
           make_latest: false
         env:
