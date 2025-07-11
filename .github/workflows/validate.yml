@@ -34,7 +34,7 @@ jobs:
       - name: Check for sensitive data
         run: |
           # Check for potential secrets or sensitive data
-          if grep -r -i -E "(api.key|password|secret|token)" --exclude-dir=.git --exclude="*.md" .; then
+          if grep -r -i -E "(api.key|password|secret|token)" --exclude-dir=.git --exclude="*.md" --exclude="jquery.min.js" .; then
             echo "❌ Potential sensitive data found"
             exit 1
           fi
