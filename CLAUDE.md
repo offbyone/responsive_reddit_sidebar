@@ -26,15 +26,37 @@ The extension maintains two key states in Chrome's local storage:
 - `sidebarStatus`: 'hide' or 'show' - tracks current sidebar visibility
 - `lockStatus`: 'locked' or 'unlocked' - determines if sidebar responds to window resize
 
-## Testing
+## Development Workflow
+
+### Commands
+- `just dev` - Full development cycle: validate, package, and show installation instructions
+- `just check` - Validate manifest.json and check file sizes
+- `just package` - Create development .zip package
+- `just package-release` - Create versioned release package
+- `just bump-version [major|minor|patch]` - Update version in manifest.json
+- `just clean` - Remove build artifacts
+
+### Testing
 Since this is a Chrome extension, testing requires:
-1. Loading the extension in Chrome's developer mode
+1. Loading the extension in Chrome's developer mode (`chrome://extensions/`)
 2. Navigating to Reddit pages to test functionality
 3. Resizing browser window to test responsive behavior
 4. Verifying state persistence across page loads
+
+### Release Process
+1. **Development**: Work on main branch, automatic dev builds created on push
+2. **Version Bump**: Use `just bump-version patch` to update version
+3. **Release**: Create git tag (`git tag v0.7`) to trigger production release
+4. **Chrome Web Store**: Manual upload of release .zip to Chrome Web Store Developer Dashboard
+
+### CI/CD
+- `.github/workflows/validate.yml` - PR validation and artifact creation
+- `.github/workflows/dev-release.yml` - Development releases from main branch
+- `.github/workflows/release.yml` - Production releases from git tags
 
 ## Development Notes
 - The extension only targets Reddit URLs (reddit.com, np.reddit.com)
 - DOM manipulation targets Reddit's specific CSS classes (`div.side`, `div#header-bottom-right`)
 - Uses event delegation for dynamically added toggle links
 - Includes logic to collapse multi-reddit chooser when not on front page
+- Chrome Web Store publishing requires manual steps after automated release creation
