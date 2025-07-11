@@ -11,6 +11,7 @@ package:
         -x "DEVELOPMENT.md" \
         -x "*.zip" \
         -x ".github/*"
+        -x ".jj*"
     echo "Created responsive-reddit-sidebar-dev.zip"
 
 # Package extension for release (creates versioned .zip)
@@ -24,7 +25,8 @@ package-release:
         -x "justfile" \
         -x "DEVELOPMENT.md" \
         -x "*.zip" \
-        -x ".github/*"
+        -x ".github/*" \
+        -x ".jj*"
     echo "Created responsive-reddit-sidebar-v${VERSION}.zip"
 
 # Validate manifest.json

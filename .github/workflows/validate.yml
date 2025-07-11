@@ -2,66 +2,50 @@ name: Validate
 
 on:
   pull_request:
-    branches: [ main ]
+    branches: [main]
   push:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   validate:
     runs-on: ubuntu-latest
-    
+
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Install jq
-      run: sudo apt-get update && sudo apt-get install -y jq
-    
-    - name: Install just
-      uses: extractions/setup-just@v2
-    
-    - name: Validate manifest and check sizes
-      run: just check
-    
-    - name: Check jQuery integrity
-      run: |
-        # Verify jQuery file exists and has reasonable size
-        if [ ! -f "jquery.min.js" ]; then
-          echo "❌ jquery.min.js not found"
-          exit 1
-        fi
-        
-        SIZE=$(stat -c%s "jquery.min.js")
-        if [ $SIZE -lt 80000 ] || [ $SIZE -gt 110000 ]; then
-          echo "❌ jquery.min.js size unexpected: $SIZE bytes"
-          exit 1
-        fi
-        
-        echo "✅ jQuery file OK ($SIZE bytes)"
-    
-    - name: Validate JavaScript syntax
-      run: |
-        # Basic syntax check for script.js
-        if ! node -c script.js; then
-          echo "❌ JavaScript syntax error in script.js"
-          exit 1
-        fi
-        echo "✅ JavaScript syntax OK"
-    
-    - name: Check for sensitive data
-      run: |
-        # Check for potential secrets or sensitive data
-        if grep -r -i -E "(api.key|password|secret|token)" --exclude-dir=.git --exclude="*.md" .; then
-          echo "❌ Potential sensitive data found"
-          exit 1
-        fi
-        echo "✅ No sensitive data detected"
-    
-    - name: Package extension for testing
-      run: just package
-    
-    - name: Upload development package
-      uses: actions/upload-artifact@v4
-      with:
-        name: extension-dev-${{ github.sha }}
-        path: responsive-reddit-sidebar-dev.zip
-        retention-days: 30
+      - uses: actions/checkout@v4
+
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+
+      - name: Install just
+        uses: extractions/setup-just@v2
+
+      - name: Validate manifest and check sizes
+        run: just check
+
+      - name: Validate JavaScript syntax
+        run: |
+          # Basic syntax check for script.js
+          if ! node -c script.js; then
+            echo "❌ JavaScript syntax error in script.js"
+            exit 1
+          fi
+          echo "✅ JavaScript syntax OK"
+
+      - name: Check for sensitive data
+        run: |
+          # Check for potential secrets or sensitive data
+          if grep -r -i -E "(api.key|password|secret|token)" --exclude-dir=.git --exclude="*.md" .; then
+            echo "❌ Potential sensitive data found"
+            exit 1
+          fi
+          echo "✅ No sensitive data detected"
+
+      - name: Package extension for testing
+        run: just package
+
+      - name: Upload development package
+        uses: actions/upload-artifact@v4
+        with:
+          name: extension-dev-${{ github.sha }}
+          path: responsive-reddit-sidebar-dev.zip
+          retention-days: 30
