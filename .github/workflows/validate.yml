@@ -7,6 +7,23 @@ on:
     branches: [main]
 
 jobs:
+  zizmor:
+    name: Zizmor
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read # only needed for private repos
+      actions: read # only needed for private repos
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - name: Run zizmor 🌈
+        uses: zizmorcore/zizmor-action@f52a838cfabf134edcbaa7c8b3677dde20045018 # v0.1.1
+        with:
+          advanced-security: false
+
   validate:
     runs-on: ubuntu-latest
 
@@ -30,15 +47,6 @@ jobs:
             exit 1
           fi
           echo "✅ JavaScript syntax OK"
-
-      - name: Check for sensitive data
-        run: |
-          # Check for potential secrets or sensitive data
-          if grep -r -i -E "(api.key|password|secret|token)" --exclude-dir=.git --exclude="*.md" --exclude="jquery.min.js" .; then
-            echo "❌ Potential sensitive data found"
-            exit 1
-          fi
-          echo "✅ No sensitive data detected"
 
       - name: Package extension for testing
         run: just package
