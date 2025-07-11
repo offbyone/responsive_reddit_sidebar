@@ -1,5 +1,5 @@
- Responsive-Reddit-Sidebar - This program is a Chrome extension which 
- 	responsively or manually hides the sidebar on reddit.com.
+ Responsive-Reddit-Sidebar-3 - This program is a Chrome extension which responsively or manually hides the sidebar on reddit.com.
+    Modified work Copyright (C) 2025  Chris Rose
   	Modified work Copyright (C) 2016  Daniel McKnight
     Original work Copyright (C) 2010  Hrishikesh Bakshi
 
@@ -15,6 +15,5 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-    
-    Contact: hellomcknight@gmail.com
-    
+
+    Contact: opensource@offby1.net
