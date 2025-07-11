@@ -2,68 +2,72 @@ name: Development Release
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   dev-release:
+    permissions:
+      contents: read
+      packages: write
+
     runs-on: ubuntu-latest
-    
+
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Install jq
-      run: sudo apt-get update && sudo apt-get install -y jq
-    
-    - name: Install just
-      uses: extractions/setup-just@v2
-    
-    - name: Validate extension
-      run: just check
-    
-    - name: Get version and commit info
-      id: info
-      run: |
-        VERSION=$(jq -r '.version' manifest.json)
-        SHORT_SHA=$(git rev-parse --short HEAD)
-        echo "version=$VERSION" >> $GITHUB_OUTPUT
-        echo "short_sha=$SHORT_SHA" >> $GITHUB_OUTPUT
-    
-    - name: Package development release
-      run: just package
-    
-    - name: Rename package with commit info
-      run: |
-        mv responsive-reddit-sidebar-dev.zip \
-           responsive-reddit-sidebar-v${{ steps.info.outputs.version }}-dev-${{ steps.info.outputs.short_sha }}.zip
-    
-    - name: Create or update development release
-      uses: softprops/action-gh-release@v2
-      with:
-        tag_name: dev-latest
-        name: "Development Build (v${{ steps.info.outputs.version }}-dev-${{ steps.info.outputs.short_sha }})"
-        body: |
-          **Development Build**
-          
-          This is an automated development release from the main branch.
-          
-          **Version:** ${{ steps.info.outputs.version }}
-          **Commit:** ${{ github.sha }}
-          **Built:** ${{ github.event.head_commit.timestamp }}
-          
-          **Changes in this build:**
-          ${{ github.event.head_commit.message }}
-          
-          **Installation:**
-          1. Download the .zip file
-          2. Extract it to a folder
-          3. Open Chrome and navigate to `chrome://extensions/`
-          4. Enable "Developer mode"
-          5. Click "Load unpacked" and select the extracted folder
-          
-          **Note:** This is a development build and may be unstable. For stable releases, use tagged releases instead.
-        files: |
-          responsive-reddit-sidebar-v${{ steps.info.outputs.version }}-dev-${{ steps.info.outputs.short_sha }}.zip
-        prerelease: true
-        make_latest: false
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+
+      - name: Install just
+        uses: extractions/setup-just@dd310ad5a97d8e7b41793f8ef055398d51ad4de6 # v2.0.0
+
+      - name: Validate extension
+        run: just check
+
+      - name: Get version and commit info
+        id: info
+        run: |
+          VERSION="$(jq -r '.version' manifest.json)"
+          SHORT_SHA=$(git rev-parse --short HEAD)
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "short_sha=$SHORT_SHA" >> "$GITHUB_OUTPUT"
+
+      - name: Package development release
+        run: just package "v${STEPS_INFO_OUTPUTS_VERSION}-dev-${STEPS_INFO_OUTPUTS_SHORT_SHA}"
+        env:
+          STEPS_INFO_OUTPUTS_VERSION: ${{ steps.info.outputs.version }}
+          STEPS_INFO_OUTPUTS_SHORT_SHA: ${{ steps.info.outputs.short_sha }}
+
+      - name: Create or update development release
+        uses: softprops/action-gh-release@72f2c25fcb47643c292f7107632f7a47c1df5cd8 # v2.3.2
+        with:
+          tag_name: dev-latest
+          name: "Development Build (v${{ steps.info.outputs.version }}-dev-${{ steps.info.outputs.short_sha }})"
+          body: |
+            **Development Build**
+
+            This is an automated development release from the main branch.
+
+            **Version:** ${{ steps.info.outputs.version }}
+            **Commit:** ${{ github.sha }}
+            **Built:** ${{ github.event.head_commit.timestamp }}
+
+            **Changes in this build:**
+            ${{ github.event.head_commit.message }}
+
+            **Installation:**
+            1. Download the .zip file
+            2. Extract it to a folder
+            3. Open Chrome and navigate to `chrome://extensions/`
+            4. Enable "Developer mode"
+            5. Click "Load unpacked" and select the extracted folder
+
+            **Note:** This is a development build and may be unstable. For stable releases, use tagged releases instead.
+          files: |
+            dist/responsive-reddit-sidebar-v${{ steps.info.outputs.version }}-dev-${{ steps.info.outputs.short_sha }}.zip
+          prerelease: true
+          make_latest: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
