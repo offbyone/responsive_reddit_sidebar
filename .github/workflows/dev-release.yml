@@ -9,13 +9,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
 
       - name: Install jq
         run: sudo apt-get update && sudo apt-get install -y jq
 
       - name: Install just
-        uses: extractions/setup-just@v2
+        uses: extractions/setup-just@dd310ad5a97d8e7b41793f8ef055398d51ad4de6 # v2.0.0
 
       - name: Validate extension
         run: just check
@@ -29,10 +31,13 @@ jobs:
           echo "short_sha=$SHORT_SHA" >> "$GITHUB_OUTPUT"
 
       - name: Package development release
-        run: just package "v${{ steps.info.outputs.version }}-dev-${{ steps.info.outputs.short_sha }}"
+        run: just package "v${STEPS_INFO_OUTPUTS_VERSION}-dev-${STEPS_INFO_OUTPUTS_SHORT_SHA}"
+        env:
+          STEPS_INFO_OUTPUTS_VERSION: ${{ steps.info.outputs.version }}
+          STEPS_INFO_OUTPUTS_SHORT_SHA: ${{ steps.info.outputs.short_sha }}
 
       - name: Create or update development release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@72f2c25fcb47643c292f7107632f7a47c1df5cd8 # v2.3.2
         with:
           tag_name: dev-latest
           name: "Development Build (v${{ steps.info.outputs.version }}-dev-${{ steps.info.outputs.short_sha }})"
