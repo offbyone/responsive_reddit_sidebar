@@ -25,6 +25,8 @@ jobs:
           advanced-security: false
 
   validate:
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
 
     steps:
